@@ -10,7 +10,7 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 const getAllContacts = async (_, res) => {
   const result = await listContacts();
-  res.status(200).json(result);
+  res.json(result);
 };
 
 const getOneContact = async (req, res) => {
@@ -19,7 +19,7 @@ const getOneContact = async (req, res) => {
   if (!result) {
     throw HttpError(404);
   }
-  res.status(200).json(result);
+  res.json(result);
 };
 
 const deleteContact = async (req, res) => {
@@ -28,7 +28,7 @@ const deleteContact = async (req, res) => {
   if (!result) {
     throw HttpError(404);
   }
-  res.status(200).send(result);
+  res.json(result);
 };
 
 const createContact = async (req, res) => {
@@ -46,7 +46,7 @@ const updateContact = async (req, res) => {
   if (!result) {
     throw HttpError(404);
   }
-  res.status(200).json(result);
+  res.json(result);
 };
 
 export default {
