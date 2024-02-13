@@ -32,8 +32,8 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
-  const { name, email, phone } = req.body;
-  const result = await addContact(name, email, phone);
+  // const { name, email, phone, favorite } = req.body;
+  const result = await addContact(req.body);
   res.status(201).json(result);
 };
 
@@ -49,10 +49,21 @@ const updateContact = async (req, res) => {
   res.json(result);
 };
 
+const updateStatusContact = async (req, res) => {
+  const { id } = req.params;
+  const { favorite } = req.body;
+  const result = await contactsServices.updateStatusContact(id, favorite);
+  if (!result) {
+    throw HttpError(404);
+  }
+  res.json(result);
+};
+
 export default {
   getAllContacts: ctrlWrapper(getAllContacts),
   getOneContact: ctrlWrapper(getOneContact),
   deleteContact: ctrlWrapper(deleteContact),
   createContact: ctrlWrapper(createContact),
   updateContact: ctrlWrapper(updateContact),
+  updateStatusContact: ctrlWrapper(updateStatusContact),
 };
