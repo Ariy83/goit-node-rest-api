@@ -16,12 +16,10 @@ export async function addContact(data) {
   return Contact.create(data);
 }
 
-async function updateContact(id, data) {
+export async function editContact(id, data) {
   return Contact.findByIdAndUpdate(id, data);
 }
 
-async function updateStatusContact(id, body) {
+export async function updateContactStatus(id, body) {
   return Contact.findByIdAndUpdate(id, body);
 }
-
-export default { updateContact, updateStatusContact };
