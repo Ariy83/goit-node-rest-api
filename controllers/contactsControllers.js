@@ -1,10 +1,11 @@
 import {
   addContact,
+  editContact,
   getContactById,
   listContacts,
   removeContact,
+  updateContactStatus,
 } from "../services/contactsServices.js";
-import contactsServices from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
@@ -32,8 +33,8 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
-  const { name, email, phone } = req.body;
-  const result = await addContact(name, email, phone);
+  // const { name, email, phone, favorite } = req.body;
+  const result = await addContact(req.body);
   res.status(201).json(result);
 };
 
@@ -42,7 +43,16 @@ const updateContact = async (req, res) => {
     throw HttpError(400, "Body must have at least one field");
   }
   const { id } = req.params;
-  const result = await contactsServices.updateContact(id, req.body);
+  const result = await editContact(id, req.body);
+  if (!result) {
+    throw HttpError(404);
+  }
+  res.json(result);
+};
+
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await updateContactStatus(contactId, req.body);
   if (!result) {
     throw HttpError(404);
   }
@@ -55,4 +65,5 @@ export default {
   deleteContact: ctrlWrapper(deleteContact),
   createContact: ctrlWrapper(createContact),
   updateContact: ctrlWrapper(updateContact),
+  updateStatusContact: ctrlWrapper(updateStatusContact),
 };
