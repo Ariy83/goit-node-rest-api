@@ -9,9 +9,16 @@ import {
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
-const getAllContacts = async (_, res) => {
-  const result = await listContacts();
-  res.json(result);
+const getAllContacts = async (req, res) => {
+  const { favorite } = req.query;
+  if (favorite) {
+    const favorites = await listContacts();
+    const favResult = favorites.filter((item) => item.favorite);
+    res.json(favResult);
+  } else {
+    const result = await listContacts();
+    res.json(result);
+  }
 };
 
 const getOneContact = async (req, res) => {
