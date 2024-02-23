@@ -15,9 +15,20 @@ const getAllContacts = async (req, res) => {
   const { page = 1, limit = 20 } = req.query;
   const skip = limit * (page - 1);
 
-  const total = await getContactsCountByFilter({ owner });
-  const result = await getContactsByFilter({ owner }, { skip, limit });
-  res.json({ total, result });
+  const { favorite } = req.query;
+
+  if (favorite) {
+    const total = await getContactsCountByFilter({ owner, favorite });
+    const result = await getContactsByFilter(
+      { owner, favorite },
+      { skip, limit }
+    );
+    res.json({ total, result });
+  } else {
+    const total = await getContactsCountByFilter({ owner });
+    const result = await getContactsByFilter({ owner }, { skip, limit });
+    res.json({ total, result });
+  }
 };
 
 const getOneContact = async (req, res) => {

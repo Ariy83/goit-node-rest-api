@@ -8,5 +8,9 @@ export const signup = async (data) => {
 };
 
 export const setToken = (id, token = "") => {
-  User.findByIdAndUpdate(id, { token });
+  return User.findByIdAndUpdate(id, { token });
+};
+
+export const setSubscription = (id, subscription) => {
+  return User.findByIdAndUpdate(id, { subscription });
 };

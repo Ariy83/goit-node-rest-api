@@ -12,3 +12,7 @@ export const signinSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
   subscription: Joi.string().valid("starter", "pro", "business"),
 });
+
+export const subscriptionSchema = Joi.object({
+  subscription: Joi.string().valid("starter", "pro", "business"),
+});
