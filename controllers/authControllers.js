@@ -63,7 +63,8 @@ const logout = async (req, res) => {
 };
 
 const updateSubscription = async (req, res) => {
-  const { _id, subscription } = req.user;
+  const { _id } = req.user;
+  const { subscription } = req.body;
   await authServices.setSubscription(_id, subscription);
 
   res.json({ subscription });
