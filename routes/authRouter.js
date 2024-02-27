@@ -7,11 +7,13 @@ import {
   subscriptionSchema,
 } from "../schemas/usersSchemas.js";
 import authenticate from "../middlewares/authenticate.js";
+import upload from "../middlewares/upload.js";
 
 const authRouter = express.Router();
 
 authRouter.post(
   "/register",
+  upload.single("avatarURL"),
   validateBody(signupSchema),
   authControllers.register
 );
@@ -27,6 +29,13 @@ authRouter.patch(
   authenticate,
   validateBody(subscriptionSchema),
   authControllers.updateSubscription
+);
+
+authRouter.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatarURL"),
+  authControllers.updateAvatar
 );
 
 export default authRouter;
