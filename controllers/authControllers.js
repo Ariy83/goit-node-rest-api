@@ -5,6 +5,12 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
+import fs from "fs/promises";
+import path from "path";
+import Jimp from "jimp";
+
+const avatarDir = path.resolve("public", "avatars");
 
 const { JWT_SECRET } = process.env;
 
@@ -14,11 +20,21 @@ const register = async (req, res) => {
   if (user) {
     throw HttpError(409, "Email in use");
   }
+  const avatarURL = gravatar.url(email, {
+    protocol: "https",
+    s: "250",
+    r: "g",
+    d: "robohash",
+  });
 
-  const newUser = await authServices.signup(req.body);
+  const newUser = await authServices.signup({ ...req.body, avatarURL });
 
   res.status(201).json({
-    user: { email: newUser.email, subscription: newUser.subscription },
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
+    },
   });
 };
 
@@ -70,10 +86,31 @@ const updateSubscription = async (req, res) => {
   res.json({ subscription });
 };
 
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: oldPath, filename } = req.file;
+
+  await Jimp.read(oldPath)
+    .then((name) => {
+      return name.resize(250, 250).write(oldPath);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+  const newPath = path.join(avatarDir, filename);
+  await fs.rename(oldPath, newPath);
+
+  await authServices.setAvatar(_id, newPath);
+
+  res.json({ avatarURL: newPath });
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
   updateSubscription: ctrlWrapper(updateSubscription),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };
